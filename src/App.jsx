@@ -1,35 +1,47 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { useState } from "react";
+import reactLogo from "./assets/react.svg";
+import viteLogo from "/vite.svg";
+import "./App.css";
+import { useQuery, gql } from "@apollo/client";
+import { Button, Input } from "antd";
+
+const CHAT = gql`
+  query GetChat($prompt: String!) {
+    aiChat(prompt: $prompt)
+  }
+`;
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [count, setCount] = useState(0);
+  const [text, setText] = useState("");
+  const [sendText, setSendText] = useState("你好");
 
+  const { loading, error, data } = useQuery(CHAT, {
+    variables: { prompt: sendText },
+  });
+
+  // if (loading) return <p>Loading...</p>;
+  if (error) return <p>Error : {error.message}</p>;
+  console.log("data", data);
+  const onChange = (e) => {
+    // console.log("onChange", e.target.value);
+    setText(e.target.value);
+  };
+  const onClick = () => {
+    console.log("onClick", text);
+    setSendText(text);
+  };
   return (
     <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
+      {data && <h6>{data.aiChat}</h6>}
       <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
+        <Input onChange={onChange} placeholder="输入消息" />
+        <Button loading={loading} onClick={onClick} type="primary">
+          发送
+        </Button>
       </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
     </>
-  )
+  );
 }
 
-export default App
+export default App;

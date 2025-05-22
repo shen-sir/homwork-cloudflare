@@ -13,6 +13,7 @@
 	},
 	"dependencies": {
 		"@apollo/client": "^3.13.8",
+		"@mastra/client-js": "^0.10.0",
 		"antd": "^5.25.1",
 		"graphql": "^16.11.0",
 		"react": "^19.1.0",
